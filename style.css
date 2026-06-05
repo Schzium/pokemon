@@ -1,0 +1,782 @@
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(circle at top left,rgba(239,68,68,.25),transparent 35%),radial-gradient(circle at bottom right,rgba(59,130,246,.18),transparent 35%),#070b16;color:white;min-height:100vh}.app{max-width:1200px;margin:auto;padding:24px}.header,.add-panel,.toolbar,.card,.detail-card{border:1px solid #263244;background:rgba(15,23,42,.78);border-radius:26px;box-shadow:0 20px 60px #0005}.header{padding:18px;margin-bottom:18px}.brand{display:flex;gap:14px;align-items:center}.pokeball{width:52px;height:52px;border-radius:50%;background:linear-gradient(#dc2626 0 48%,#111827 48% 55%,white 55%);position:relative}.pokeball:after{content:"";position:absolute;left:18px;top:18px;width:16px;height:16px;border-radius:50%;background:#111827;border:4px solid white}h1{margin:0;font-size:34px}p{color:#94a3b8}.add-panel,.toolbar{display:flex;gap:14px;align-items:end;padding:18px;margin-bottom:18px;flex-wrap:wrap}label{display:block;color:#94a3b8;font-weight:800;margin-bottom:8px}input,select,button{border:0;border-radius:16px;background:#111827;color:white;padding:14px 16px;font-weight:800}input{min-width:330px}button{background:#ef4444;cursor:pointer}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{padding:16px;cursor:pointer;border-color:var(--type)}.card:hover{transform:translateY(-3px)}.top{display:flex;justify-content:space-between}.dex{background:var(--type);color:var(--typeText);border-radius:999px;padding:6px 12px;font-weight:950}.image-box{height:135px;border:1px dashed #64748b;border-radius:18px;background:#07101f;display:grid;place-items:center;color:#94a3b8;margin:14px 0;position:relative;text-align:center}.image-box img{width:100%;height:100%;object-fit:contain;padding:10px}.edit{position:absolute;right:12px;bottom:12px;border-radius:50%;width:42px;height:42px;padding:0}.name{font-size:25px;font-weight:950}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.badge{background:var(--badge);color:var(--badgeText);font-size:12px;font-weight:950;border-radius:999px;padding:6px 10px}.detail{position:fixed;inset:0 0 0 auto;width:min(530px,100%);background:rgba(2,6,23,.97);border-left:1px solid #263244;padding:24px;overflow:auto;display:none}.detail.show{display:block}.close{float:right;background:#111827;border-radius:50%;width:44px;height:44px;padding:0}.detail-card{padding:18px;margin-top:14px}.stat{display:grid;grid-template-columns:100px 45px 1fr;gap:8px;margin:10px 0}.bar{height:10px;background:#1e293b;border-radius:999px;overflow:hidden}.fill{height:10px;background:#ef4444;border-radius:999px}.pill{display:inline-block;background:#1e293b;border-radius:12px;padding:8px 10px;margin:4px;font-size:13px;font-weight:800}@media(max-width:850px){.cards{grid-template-columns:1fr}input{min-width:100%}}
+.secondary{background:#2563eb}
+.ghost{background:#334155}
+.count{color:#94a3b8;font-weight:800;margin-bottom:14px}
+
+
+/* IMAGE LAYOUT FIX v2 */
+.cards{align-items:stretch}
+.card{min-height:365px;display:flex;flex-direction:column;overflow:hidden}
+.image-box{
+  height:185px !important;
+  width:100% !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  margin:16px 0 18px !important;
+}
+.image-box img{
+  width:100% !important;
+  height:100% !important;
+  max-width:92% !important;
+  max-height:92% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  padding:0 !important;
+  display:block !important;
+}
+.name{margin-top:auto;line-height:1.1;min-height:34px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{min-height:32px}
+.detail .image-box{height:270px !important}
+.detail .name{white-space:normal}
+
+/* UI update: softer text, fixed type badge, no upload/edit button */
+body, input, select, button {
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, .name, .dex, .label, .value, .count {
+  font-weight: 600;
+}
+
+.badge {
+  width: 86px;
+  min-width: 86px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  text-align: center;
+  letter-spacing: .2px;
+  font-weight: 500;
+}
+
+.card-action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(15, 23, 42, .78);
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.icon-btn.active.favorite {
+  background: #facc15;
+  color: #111827;
+  border-color: #facc15;
+}
+
+.icon-btn.active.shiny {
+  background: #a855f7;
+  color: #fff;
+  border-color: #c084fc;
+  box-shadow: 0 0 18px rgba(168, 85, 247, .5);
+}
+
+.image-box {
+  cursor: default;
+}
+
+.image-box img {
+  transform: scale(.92);
+}
+
+.detail .image-box {
+  height: 260px;
+}
+
+/* Generation dropdown update */
+body, input, select, button { font-weight: 400; }
+h1, h2, h3, h4, .name, .dex, .count { font-weight: 600; }
+
+.badge{
+  width:86px;
+  min-width:86px;
+  height:28px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  text-align:center;
+  letter-spacing:.2px;
+  font-weight:500;
+}
+
+.ghost{background:#334155}
+.loading-status{color:#cbd5e1;font-size:14px}
+.card-action-group{display:flex;align-items:center;gap:8px}
+.icon-btn{
+  width:34px;height:34px;border-radius:999px;padding:0;
+  display:inline-grid;place-items:center;background:rgba(15,23,42,.78);
+  border:1px solid #334155;color:#cbd5e1;font-size:18px;line-height:1
+}
+.icon-btn.active.favorite{background:#facc15;color:#111827;border-color:#facc15}
+.icon-btn.active.shiny{background:#a855f7;color:#fff;border-color:#c084fc;box-shadow:0 0 18px rgba(168,85,247,.5)}
+.image-box{overflow:hidden;cursor:default}
+.image-box img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;padding:14px;display:block;transform:scale(.92)}
+.detail .image-box{height:260px}
+
+/* Caught and shiny image button update */
+.card-action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(15, 23, 42, .78);
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-btn svg {
+  width: 21px;
+  height: 21px;
+  display: block;
+}
+
+.icon-btn.favorite.active {
+  background: #facc15;
+  border-color: #facc15;
+  color: #111827;
+}
+
+.icon-btn.caught.active {
+  background: #f8fafc;
+  border-color: #f8fafc;
+  box-shadow: 0 0 16px rgba(248, 250, 252, .35);
+}
+
+.icon-btn.shiny.active {
+  background: linear-gradient(135deg, #7c3aed, #ec4899, #facc15);
+  border-color: #f0abfc;
+  box-shadow: 0 0 18px rgba(236, 72, 153, .55);
+}
+
+.icon-btn.shiny img {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+}
+
+.icon-btn.shiny:not(.active) img {
+  filter: grayscale(1) opacity(.72);
+}
+
+.card.caught-card {
+  box-shadow: 0 0 28px rgba(248, 250, 252, .16), 0 0 28px color-mix(in srgb,var(--type) 22%, transparent);
+}
+
+.caught-label {
+  margin-top: 10px;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.caught-label span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* HD icon image update */
+.icon-btn {
+  background: rgba(15, 23, 42, .72);
+  border: 1px solid #334155;
+  overflow: hidden;
+}
+
+.icon-btn img.icon-image {
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+  display: block;
+}
+
+.icon-btn.caught img.icon-image {
+  width: 27px;
+  height: 27px;
+}
+
+.icon-btn.favorite img.icon-image {
+  width: 23px;
+  height: 23px;
+}
+
+.icon-btn.shiny img.icon-image {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-btn.favorite:not(.active) img.icon-image {
+  filter: brightness(0) opacity(.8);
+}
+
+.icon-btn.favorite.active {
+  background: rgba(250, 204, 21, .16);
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(250, 204, 21, .3);
+}
+
+.icon-btn.caught:not(.active) img.icon-image {
+  filter: grayscale(1) opacity(.65);
+}
+
+.icon-btn.caught.active {
+  background: rgba(248,250,252,.14);
+  border-color: #f8fafc;
+  box-shadow: 0 0 16px rgba(248,250,252,.28);
+}
+
+.icon-btn.shiny:not(.active) img.icon-image {
+  filter: grayscale(1) brightness(.65) opacity(.75);
+}
+
+.icon-btn.shiny.active {
+  background: rgba(250, 204, 21, .14);
+  border-color: #facc15;
+  box-shadow: 0 0 18px rgba(250, 204, 21, .36);
+}
+
+/* refined icon styles */
+.icon-btn{
+  background: rgba(15,23,42,.72);
+  border: 1px solid #334155;
+  overflow: hidden;
+}
+
+.icon-btn img.icon-image{
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+  display: block;
+  background: transparent !important;
+}
+
+.icon-btn.caught img.icon-image{
+  width: 26px;
+  height: 26px;
+}
+
+.icon-btn.shiny img.icon-image{
+  width: 23px;
+  height: 23px;
+  background: transparent !important;
+}
+
+.icon-btn.favorite img.icon-image{
+  width: 22px;
+  height: 22px;
+}
+
+/* inactive states */
+.icon-btn.favorite:not(.active) img.icon-image{
+  filter: grayscale(1) brightness(.3) contrast(1.1);
+}
+.icon-btn.caught:not(.active) img.icon-image{
+  filter: grayscale(1) opacity(.8);
+}
+.icon-btn.shiny:not(.active) img.icon-image{
+  filter: grayscale(1) brightness(.75) opacity(.82);
+}
+
+/* active states */
+.icon-btn.favorite.active{
+  background: rgba(250,204,21,.12);
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(250,204,21,.28);
+}
+.icon-btn.favorite.active img.icon-image{
+  filter: none;
+}
+
+.icon-btn.caught.active{
+  background: rgba(248,250,252,.10);
+  border-color: #cbd5e1;
+  box-shadow: 0 0 16px rgba(248,250,252,.22);
+}
+
+.icon-btn.shiny.active{
+  background: rgba(250,204,21,.10);
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(250,204,21,.24);
+}
+.icon-btn.shiny.active img.icon-image{
+  filter: none;
+}
+
+/* favorite icon inactive: white star with black outline */
+.icon-btn.favorite:not(.active) img.icon-image{
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(1px 0 0 #000)
+    drop-shadow(-1px 0 0 #000)
+    drop-shadow(0 1px 0 #000)
+    drop-shadow(0 -1px 0 #000)
+    drop-shadow(1px 1px 0 #000)
+    drop-shadow(-1px -1px 0 #000)
+    drop-shadow(1px -1px 0 #000)
+    drop-shadow(-1px 1px 0 #000);
+}
+
+.icon-btn.favorite.active img.icon-image{
+  filter:none;
+}
+
+/* Match inactive white style across favorite, pokeball, and shiny */
+.icon-btn.caught:not(.active) img.icon-image,
+.icon-btn.favorite:not(.active) img.icon-image,
+.icon-btn.shiny:not(.active) img.icon-image{
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(1px 0 0 #000)
+    drop-shadow(-1px 0 0 #000)
+    drop-shadow(0 1px 0 #000)
+    drop-shadow(0 -1px 0 #000)
+    drop-shadow(1px 1px 0 #000)
+    drop-shadow(-1px -1px 0 #000)
+    drop-shadow(1px -1px 0 #000)
+    drop-shadow(-1px 1px 0 #000);
+  opacity: .96;
+}
+
+/* Keep active states colorful/normal */
+.icon-btn.caught.active img.icon-image,
+.icon-btn.favorite.active img.icon-image,
+.icon-btn.shiny.active img.icon-image{
+  filter: none;
+  opacity: 1;
+}
+
+/* Fix pokeball inactive state:
+   keep the original pokeball look instead of turning the whole icon white */
+.icon-btn.caught:not(.active) img.icon-image{
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.icon-btn.caught{
+  background: rgba(15,23,42,.72);
+  border: 1px solid #334155;
+}
+
+.icon-btn.caught.active{
+  background: rgba(248,250,252,.10);
+  border-color: #cbd5e1;
+  box-shadow: 0 0 16px rgba(248,250,252,.22);
+}
+
+/* keep favorite and shiny inactive in the white outlined style */
+.icon-btn.favorite:not(.active) img.icon-image,
+.icon-btn.shiny:not(.active) img.icon-image{
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(1px 0 0 #000)
+    drop-shadow(-1px 0 0 #000)
+    drop-shadow(0 1px 0 #000)
+    drop-shadow(0 -1px 0 #000)
+    drop-shadow(1px 1px 0 #000)
+    drop-shadow(-1px -1px 0 #000)
+    drop-shadow(1px -1px 0 #000)
+    drop-shadow(-1px 1px 0 #000) !important;
+  opacity: .96 !important;
+}
+
+/* Match normal and shiny Pokémon artwork style + alignment */
+.image-box{
+  display:grid;
+  place-items:center;
+}
+
+.image-box img{
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center center !important;
+  padding:12px !important;
+  margin:0 auto;
+  transform:none !important;
+}
+
+.card .image-box{
+  height:165px;
+}
+
+.detail .image-box{
+  height:280px;
+}
+
+/* Filter update */
+.caught-label{
+  display:none !important;
+}
+
+/* =========================================================
+   FINAL RESPONSIVE LAYOUT: laptop + Android friendly
+   ========================================================= */
+
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* smoother sizing */
+html{
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body{
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+button, select, input{
+  font-size: 15px;
+  min-height: 46px;
+}
+
+button{
+  touch-action: manipulation;
+}
+
+.app{
+  width: min(1200px, 100%);
+  padding: max(18px, var(--safe-top)) 20px max(22px, var(--safe-bottom));
+}
+
+/* Desktop card grid */
+.cards{
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  align-items: stretch;
+}
+
+.card{
+  min-height: 342px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.card .top{
+  min-height: 36px;
+}
+
+.name{
+  line-height: 1.08;
+  min-height: 32px;
+  word-break: break-word;
+}
+
+.badges{
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.image-box{
+  width: 100%;
+  height: clamp(150px, 18vw, 190px);
+  overflow: hidden;
+}
+
+.detail .image-box{
+  height: clamp(230px, 35vh, 310px);
+}
+
+/* Toolbar and add panel: better wrapping */
+.add-panel,
+.toolbar{
+  align-items: center;
+}
+
+.add-panel > div,
+.toolbar input{
+  flex: 1 1 260px;
+}
+
+.add-panel select,
+.toolbar select{
+  flex: 0 1 220px;
+}
+
+#addGenerationBtn{
+  flex: 0 1 230px;
+}
+
+#clearBtn{
+  flex: 0 0 auto;
+}
+
+.loading-status{
+  flex: 1 1 180px;
+}
+
+/* Detail drawer desktop */
+.detail{
+  width: min(560px, 100%);
+}
+
+.detail h1{
+  padding-right: 50px;
+}
+
+/* Better icon tap size */
+.icon-btn{
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+}
+
+.card-action-group{
+  gap: 7px;
+}
+
+/* Mobile layout */
+@media (max-width: 760px){
+  body{
+    background:
+      radial-gradient(circle at top left,rgba(239,68,68,.22),transparent 34%),
+      radial-gradient(circle at bottom right,rgba(59,130,246,.16),transparent 36%),
+      #070b16;
+  }
+
+  .app{
+    padding: max(12px, var(--safe-top)) 12px max(18px, var(--safe-bottom));
+  }
+
+  .header{
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .brand{
+    gap: 12px;
+  }
+
+  .pokeball{
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
+
+  .pokeball:after{
+    left: 15px;
+    top: 15px;
+    width: 14px;
+    height: 14px;
+  }
+
+  h1{
+    font-size: 28px;
+    line-height: 1.05;
+  }
+
+  .header p{
+    font-size: 14px;
+    line-height: 1.35;
+    margin-bottom: 0;
+  }
+
+  .add-panel,
+  .toolbar{
+    border-radius: 20px;
+    padding: 14px;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .add-panel > div,
+  .add-panel select,
+  .toolbar input,
+  .toolbar select,
+  #addGenerationBtn,
+  #clearBtn{
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  input, select, button{
+    width: 100%;
+    min-width: 0 !important;
+    font-size: 14px;
+    padding: 13px 14px;
+  }
+
+  .loading-status{
+    width: 100%;
+    flex: 1 1 100%;
+    min-height: 18px;
+  }
+
+  .cards{
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .count{
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 2px 2px 0;
+  }
+
+  .card{
+    min-height: 328px;
+    border-radius: 22px;
+    padding: 14px;
+  }
+
+  .image-box{
+    height: 168px;
+    margin: 12px 0;
+  }
+
+  .image-box img{
+    padding: 10px !important;
+  }
+
+  .name{
+    font-size: 24px;
+    min-height: unset;
+  }
+
+  .badge{
+    width: 82px;
+    min-width: 82px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .icon-btn{
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+
+  .icon-btn.caught img.icon-image{
+    width: 25px;
+    height: 25px;
+  }
+
+  .icon-btn.favorite img.icon-image,
+  .icon-btn.shiny img.icon-image{
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Detail becomes full-screen sheet on Android */
+  .detail{
+    width: 100%;
+    inset: 0;
+    border-left: 0;
+    padding: max(16px, var(--safe-top)) 14px max(24px, var(--safe-bottom));
+    border-radius: 0;
+  }
+
+  .detail.show{
+    display: block;
+  }
+
+  .detail h1{
+    font-size: 28px;
+    line-height: 1.1;
+    padding-right: 0;
+  }
+
+  .detail .top{
+    gap: 12px;
+  }
+
+  .detail .image-box{
+    height: 250px;
+  }
+
+  .detail-card{
+    border-radius: 20px;
+    padding: 15px;
+  }
+
+  .stat{
+    grid-template-columns: 108px 36px 1fr;
+    gap: 7px;
+    font-size: 14px;
+  }
+
+  .pill{
+    font-size: 12px;
+    padding: 7px 9px;
+  }
+
+  .close{
+    position: sticky;
+    top: max(10px, var(--safe-top));
+    z-index: 5;
+    float: right;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px){
+  .card-action-group{
+    gap: 5px;
+  }
+
+  .icon-btn{
+    width: 33px;
+    height: 33px;
+    flex-basis: 33px;
+  }
+
+  .dex{
+    padding: 6px 10px;
+  }
+
+  .image-box{
+    height: 155px;
+  }
+
+  .name{
+    font-size: 22px;
+  }
+
+  .badge{
+    width: 76px;
+    min-width: 76px;
+  }
+}
+
+/* Laptop wide view */
+@media (min-width: 1100px){
+  .cards{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* GitHub Pages friendly no horizontal overflow */
+img, svg{
+  max-width: 100%;
+}

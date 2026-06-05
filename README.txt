@@ -1,0 +1,1 @@
+Fixed offline version. Open index.html directly. It does not use fetch, so file:/// works. Try Bulbasaur, Pikachu, Charmander, Squirtle.

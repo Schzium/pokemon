@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#070b16">
+  <link rel="manifest" href="manifest.json">
+  <title>Pokédex Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="pokeball"></div>
+        <div>
+          <h1>Pokédex Builder</h1>
+          <p>Add Pokémon by generation. Data auto-fills from database or PokeAPI.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="add-panel">
+      <div>
+        <label>Add Generation</label>
+        <select id="generationSelect">
+          <option value="1">Generation 1, Kanto</option>
+          <option value="2">Generation 2, Johto</option>
+          <option value="3">Generation 3, Hoenn</option>
+          <option value="4">Generation 4, Sinnoh</option>
+          <option value="5">Generation 5, Unova</option>
+          <option value="6">Generation 6, Kalos</option>
+          <option value="7">Generation 7, Alola</option>
+          <option value="8">Generation 8, Galar</option>
+          <option value="9">Generation 9, Paldea</option>
+        </select>
+      </div>
+      <button id="addGenerationBtn">Add Selected Generation</button>
+      <button id="clearBtn" class="ghost">Clear All</button>
+      <span id="loadingStatus" class="loading-status"></span>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" placeholder="Search Pokémon">
+      <select id="typeFilter">
+        <option value="all">All Types</option>
+      </select>
+      <select id="statusFilter">
+        <option value="all">Filter</option>
+        <option value="caught">Caught</option>
+        <option value="favorite">Favorite</option>
+        <option value="shiny">Shiny</option>
+      </select>
+    </section>
+
+    <section id="cards" class="cards"></section>
+  </main>
+
+  <aside id="detail" class="detail"></aside>
+
+  <script src="database.js"></script>
+  <script src="app.js"></script>
+<script>
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  }
+</script>
+</body>
+</html>
